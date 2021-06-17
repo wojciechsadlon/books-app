@@ -34,16 +34,18 @@ class BooksList {
   renderRating(book){
     const filler = document.querySelector('.rating-' + book.id + '');
     const width = (book.rating * 10) + '%';
+    const rating = book.rating;
     filler.style.width = width;
 
-    if(book.rating < 6){
-      filler.style.background = 'linear-gradient(to bottom,  #fefcea 0%, #f1da36 100%)';
-    }else if(book.rating > 6 && book.rating <= 8){
-      filler.style.background = 'linear-gradient(to bottom, #b4df5b 0%,#b4df5b 100%)';
-    }else if(book.rating > 8 && book.rating <= 9){
-      filler.style.background = 'linear-gradient(to bottom, #299a0b 0%, #299a0b 100%)';
-    }else if(book.rating > 9){
-      filler.style.background = 'linear-gradient(to bottom, #ff0084 0%,#ff0084 100%)';
+    switch (true) {
+    case (rating < 6): filler.style.background = 'linear-gradient(to bottom,  #fefcea 0%, #f1da36 100%)';
+      break;
+    case (rating <= 8): filler.style.background = 'linear-gradient(to bottom, #b4df5b 0%,#b4df5b 100%)';
+      break;
+    case (rating <= 9): filler.style.background = 'linear-gradient(to bottom, #299a0b 0%, #299a0b 100%)';
+      break;
+    case (rating > 9): filler.style.background = 'linear-gradient(to bottom, #ff0084 0%,#ff0084 100%)';
+      break;
     }
   }
 
@@ -52,15 +54,14 @@ class BooksList {
 
     domSelectors.booksList.addEventListener('dblclick', function(event){
       event.preventDefault();
-      thisBookList.addingFavorite(event);
+      thisBookList.addFavorite(event);
     });
     domSelectors.filterForm.addEventListener('click', function(event){
       const element = event.target;
 
-      if(element.type === 'checkbox' && element.name === 'filter'){
+      if(element.name === 'filter'){
         if(element.checked){
           arrays.filters.push(element.value);
-          console.log(element);
         }else{
           arrays.filters.splice(arrays.filters.indexOf(element.value), 1);
         }
@@ -77,17 +78,17 @@ class BooksList {
       const idImg = document.querySelector('a[data-id="' + book.id + '"]');
       idImg.classList.add('hidden');
 
-      for(let genreType in genre){
+      for(const genreType in genre){
         const hasGenre = genre[genreType];
 
-        if(arrays.filters.includes(genreType) && hasGenre || arrays.filters.length === 0){
+        if(arrays.filters.includes(genreType) && hasGenre || !arrays.filters.length){
           idImg.classList.remove('hidden');
         }
       }
     }
   }
 
-  addingFavorite(elem){
+  addFavorite(elem){
     const element = elem.target.parentNode;
     if(element.parentNode.classList.contains('book__image')){
       const id = element.parentNode.getAttribute('data-id');
@@ -103,5 +104,3 @@ class BooksList {
 }
 
 const app = new BooksList(dataSource.books);
-
-app();
